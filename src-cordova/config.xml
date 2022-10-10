@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.vue.example.blog" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Savblog</name>
+    <description>Sample Apache Cordova App</description>
+    <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
+        Apache Cordova Team
+    </author>
+    <!-- this hook will point your config.xml to the DevServer on Serve -->
+    <hook type="after_prepare" src="../node_modules/vue-cli-plugin-cordova/serve-config-hook.js" />
+    <content src="index.html" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <platform name="android">
+  <icon background="res/icon/android/ldpi.png" density="ldpi" foreground="res/icon/android/ldpi.png" />
+  <icon background="res/icon/android/mdpi.png" density="mdpi" foreground="res/icon/android/mdpi.png" />
+  <icon background="res/icon/android/hdpi.png" density="hdpi" foreground="res/icon/android/hdpi.png" />
+  <icon background="res/icon/android/xhdpi.png" density="xhdpi" foreground="res/icon/android/xhdpi.png" />
+  <icon background="res/icon/android/xxhdpi.png" density="xxhdpi" foreground="res/icon/android/xxhdpi.png" />
+  <icon background="res/icon/android/xxxhdpi.png" density="xxxhdpi" foreground="res/icon/android/xxxhdpi.png" />
+ 
+  <!-- <splash src="res/splash/android/ldpi.png" density="ldpi">
+  <splash src="res/splash/android/mdpi.png" density="mdpi">
+  <splash src="res/splash/android/hdpi.png" density="hdpi">
+  <splash src="res/splash/android/xhdpi.png" density="xhdpi"/>
+  <splash src="res/splash/android/xxhdpi.png" density="xxhdpi" />
+  <splash src="res/splash/android/xxxhdpi.png" density="xxxhdpi" /> -->
+</platform>
+    </widget>

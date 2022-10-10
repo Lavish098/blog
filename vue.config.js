@@ -23,5 +23,11 @@ module.exports = {
         'Quill': 'quill/dist/quill.js'
       }),
     ]
+  },
+
+  publicPath: '',
+
+  pluginOptions: {
+    cordovaPath: 'src-cordova'
   }
 }

@@ -1,6 +1,6 @@
 <template>
-  <header>
-      <nav class="container">
+  <header >
+      <nav class="container" >
           <div class="branding">
               <router-link class="header" :to="{name: 'Home'}">
                   <img src="../assets/savblog.png" class="sav" alt="">
@@ -10,7 +10,7 @@
                   <ul v-show="!mobile">
                       <router-link class="link" :to="{name: 'Home'}">Home</router-link>
                       <router-link class="link" :to="{name: 'MoviesBlogs'}">Movies</router-link>
-                      <router-link v-if="admin" class="link" :to="{name: 'CreatePost'}">Create Post</router-link>
+                      <router-link v-if="admin" class="link" :to="{name: 'MoviesCreatePost'}">Create Post</router-link>
                       <router-link v-if="!user" class="link" :to="{name: 'Login'}">Login/Register</router-link>
                   </ul>
                   <div v-if="user" @click="toggleProfileMenu" class="profile" ref="profile">
@@ -56,7 +56,7 @@
           <ul class="mobile-nav"  v-show="mobileNav">
                       <router-link @click="toggleMobileNav" class="link" :to="{name: 'Home'}">Home</router-link>
                       <router-link @click="toggleMobileNav" class="link" :to="{name: 'MoviesBlogs'}">Movies</router-link>
-                      <router-link @click="toggleMobileNav" v-if="admin" class="link" :to="{name: 'CreatePost'}">Create Post</router-link>
+                      <router-link @click="toggleMobileNav" v-if="admin" class="link" :to="{name: 'MoviesCreatePost'}">Create Post</router-link>
                       <router-link @click="toggleMobileNav" v-if="!user" class="link" :to="{name: 'Login'}">Login/Register</router-link>
                   </ul>
       </transition>

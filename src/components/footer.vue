@@ -15,7 +15,7 @@
                   <ul>
                       <router-link class="link" :to="{name: 'Home'}">Home</router-link>
                       <router-link class="link" :to="{name: 'MoviesBlogs'}">Blogs</router-link>
-                      <router-link v-if="admin" class="link" :to="{name: 'CreatePost'}">Create Post</router-link>
+                      <router-link v-if="admin" class="link" :to="{name: 'MoviesCreatePost'}">Create Post</router-link>
                       <router-link v-if="!user" class="link" :to="{name: 'Login'}">Login/Register</router-link>
                   </ul>
               </div>

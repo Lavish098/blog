@@ -83,7 +83,7 @@ const routes = [
     name:'MoviesCreatePost',
     component: MoviesCreatePost,
     meta:{
-      title: 'CreatePost',
+      title: 'MoviesCreatePost',
       requiresAuth: true,
       requiresAdmin: true,
     }
