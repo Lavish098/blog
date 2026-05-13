@@ -1,24 +1,30 @@
-# savblog
+# SavBlogs
 
-## Project setup
-```
+SavBlogs is now a Next.js app backed by Firebase Auth, Firestore, Storage, and a Next route handler for admin role management.
+
+## Setup
+
+```bash
 npm install
+cp .env.local.example .env.local
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
+Fill in the Firebase values in `.env.local`.
+
+## Development
+
+```bash
+npm run dev
 ```
 
-### Compiles and minifies for production
-```
+## Production Build
+
+```bash
 npm run build
 ```
 
-### Lints and fixes files
-```
+## Lint
+
+```bash
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
