@@ -1,11 +1,11 @@
 import AppShell from "@/components/AppShell";
 import { AuthProvider } from "@/components/AuthProvider";
-import FirebaseNotice from "@/components/FirebaseNotice";
+import SupabaseNotice from "@/components/SupabaseNotice";
 import "./globals.css";
 
 export const metadata = {
   title: "SavBlogs",
-  description: "A modern SavBlogs experience built with Next.js and Firebase."
+  description: "A modern SavBlogs experience built with Next.js and Supabase."
 };
 
 export default function RootLayout({ children }) {
@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <AppShell>
-            <FirebaseNotice />
+            <SupabaseNotice />
             {children}
           </AppShell>
         </AuthProvider>

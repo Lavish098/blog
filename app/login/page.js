@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { LogIn } from "lucide-react";
 import { useState } from "react";
-import { getFirebaseAuth } from "@/lib/firebase/client";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,7 +19,12 @@ export default function LoginPage() {
     setError("");
 
     try {
-      await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
+      const { error: signInError } = await getSupabaseClient().auth.signInWithPassword({ email, password });
+
+      if (signInError) {
+        throw signInError;
+      }
+
       router.push("/");
     } catch (err) {
       setError(err.message || "Could not sign you in.");

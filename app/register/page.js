@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
-import { getFirebaseAuth } from "@/lib/firebase/client";
-import { createUserProfile } from "@/lib/users";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -24,15 +22,27 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      const result = await createUserWithEmailAndPassword(getFirebaseAuth(), form.email, form.password);
-      await createUserProfile(result.user.uid, {
-        firstName: form.firstName,
-        lastName: form.lastName,
-        username: form.username,
-        email: form.email
+      const { data, error: signUpError } = await getSupabaseClient().auth.signUp({
+        email: form.email,
+        password: form.password,
+        options: {
+          data: {
+            first_name: form.firstName,
+            last_name: form.lastName,
+            username: form.username
+          }
+        }
       });
-      await sendEmailVerification(result.user);
-      router.push("/");
+
+      if (signUpError) {
+        throw signUpError;
+      }
+
+      if (!data.user) {
+        throw new Error("Could not create your account.");
+      }
+
+      router.push("/login");
     } catch (err) {
       setError(err.message || "Could not create your account.");
     } finally {

@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { sendPasswordResetEmail } from "firebase/auth";
 import { Mail } from "lucide-react";
 import { useState } from "react";
-import { getFirebaseAuth } from "@/lib/firebase/client";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -15,7 +14,14 @@ export default function ForgotPasswordPage() {
     setStatus("Sending reset email...");
 
     try {
-      await sendPasswordResetEmail(getFirebaseAuth(), email);
+      const { error } = await getSupabaseClient().auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/login`
+      });
+
+      if (error) {
+        throw error;
+      }
+
       setStatus("Check your inbox for a reset link.");
     } catch (err) {
       setStatus(err.message || "Could not send reset email.");

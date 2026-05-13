@@ -2,7 +2,7 @@
 
 import { ShieldPlus } from "lucide-react";
 import { useState } from "react";
-import { getFirebaseAuth } from "@/lib/firebase/client";
+import { getSupabaseClient } from "@/lib/supabase/client";
 import RequireAuth from "@/components/RequireAuth";
 
 function AdminForm() {
@@ -14,7 +14,8 @@ function AdminForm() {
     setStatus("Updating admin role...");
 
     try {
-      const token = await getFirebaseAuth().currentUser?.getIdToken();
+      const { data: sessionData } = await getSupabaseClient().auth.getSession();
+      const token = sessionData.session?.access_token;
       const response = await fetch("/api/admin/add-admin", {
         method: "POST",
         headers: {

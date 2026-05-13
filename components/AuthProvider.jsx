@@ -1,8 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { onAuthStateChanged, signOut as firebaseSignOut } from "firebase/auth";
-import { getFirebaseAuth, hasFirebaseConfig } from "@/lib/firebase/client";
+import { getSupabaseClient, hasSupabaseConfig } from "@/lib/supabase/client";
 import { fetchUserProfile, getInitials } from "@/lib/users";
 
 const AuthContext = createContext({
@@ -18,24 +17,16 @@ const AuthContext = createContext({
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [claims, setClaims] = useState({});
   const [loading, setLoading] = useState(true);
-  const configured = hasFirebaseConfig();
+  const configured = hasSupabaseConfig();
 
   async function loadProfile(currentUser) {
     if (!currentUser) {
       setProfile(null);
-      setClaims({});
       return;
     }
 
-    const [profileData, token] = await Promise.all([
-      fetchUserProfile(currentUser.uid),
-      currentUser.getIdTokenResult(true)
-    ]);
-
-    setProfile(profileData);
-    setClaims(token.claims || {});
+    setProfile(await fetchUserProfile(currentUser.id));
   }
 
   useEffect(() => {
@@ -44,30 +35,51 @@ export function AuthProvider({ children }) {
       return undefined;
     }
 
-    const auth = getFirebaseAuth();
-    return onAuthStateChanged(auth, async (currentUser) => {
+    const supabase = getSupabaseClient();
+    let mounted = true;
+
+    async function hydrateSession() {
+      setLoading(true);
+      const { data } = await supabase.auth.getSession();
+      const currentUser = data.session?.user || null;
+
+      if (!mounted) return;
+      setUser(currentUser);
+      await loadProfile(currentUser);
+      if (mounted) setLoading(false);
+    }
+
+    hydrateSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const currentUser = session?.user || null;
       setLoading(true);
       setUser(currentUser);
       await loadProfile(currentUser);
       setLoading(false);
     });
+
+    return () => {
+      mounted = false;
+      listener.subscription.unsubscribe();
+    };
   }, [configured]);
 
   const value = useMemo(
     () => ({
       user,
       profile,
-      isAdmin: Boolean(claims.admin),
+      isAdmin: Boolean(profile?.isAdmin),
       initials: getInitials(profile?.firstName, profile?.lastName),
       loading,
       configured,
       refreshProfile: () => loadProfile(user),
       signOut: async () => {
         if (!configured) return;
-        await firebaseSignOut(getFirebaseAuth());
+        await getSupabaseClient().auth.signOut();
       }
     }),
-    [claims.admin, configured, loading, profile, user]
+    [configured, loading, profile, user]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

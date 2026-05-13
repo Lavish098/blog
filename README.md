@@ -1,6 +1,6 @@
 # SavBlogs
 
-SavBlogs is now a Next.js app backed by Firebase Auth, Firestore, Storage, and a Next route handler for admin role management.
+SavBlogs is a Next.js app backed by Supabase Auth, Postgres, and Storage.
 
 ## Setup
 
@@ -9,7 +9,7 @@ npm install
 cp .env.local.example .env.local
 ```
 
-Fill in the Firebase values in `.env.local`.
+Fill in the Supabase values in `.env.local`, then run the SQL in [supabase/schema.sql](supabase/schema.sql) inside the Supabase SQL Editor.
 
 ## Development
 
