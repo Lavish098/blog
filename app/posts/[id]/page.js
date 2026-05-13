@@ -24,8 +24,11 @@ export default function ViewPostPage() {
   return (
     <article className="article-page">
       <header className="article-hero">
-        <span className="eyebrow">{post.dateLabel}</span>
         <h1>{post.blogTitle}</h1>
+        <div className="article-meta">
+          <span className="byline">Published by {post.publisherName}</span>
+          <span className="eyebrow">{post.dateLabel}</span>
+        </div>
         {isAdmin && (
           <Link href={`/studio/edit/${post.blogID}`} className="button ghost">
             <Edit3 size={16} />

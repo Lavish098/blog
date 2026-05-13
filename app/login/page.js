@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { LogIn } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -43,6 +44,9 @@ export default function LoginPage() {
         <span className="eyebrow">Welcome back</span>
         <h1>Sign in to continue writing and reading.</h1>
         <form onSubmit={submit} className="form-card">
+          {searchParams.get("registered") && (
+            <p className="form-status">Account created. Check your email if confirmation is enabled, then sign in.</p>
+          )}
           <label className="field">
             <span>Email</span>
             <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
@@ -64,5 +68,13 @@ export default function LoginPage() {
       </div>
       <div className="auth-art" />
     </section>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -19,6 +19,8 @@ function ProfileForm() {
     });
   }, [profile]);
 
+  console.log(profile)
+
   function updateField(field, value) {
     setForm((current) => ({ ...current, [field]: value }));
   }

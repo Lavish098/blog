@@ -42,7 +42,7 @@ export default function RegisterPage() {
         throw new Error("Could not create your account.");
       }
 
-      router.push("/login");
+      router.push(data.session ? "/" : "/login?registered=1");
     } catch (err) {
       setError(err.message || "Could not create your account.");
     } finally {

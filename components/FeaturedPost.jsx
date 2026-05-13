@@ -30,12 +30,18 @@ export default function FeaturedPost({ post, welcome = false }) {
   return (
     <section className="feature-panel">
       <div className="feature-copy">
-        <span className="eyebrow">{post.dateLabel}</span>
         <h1>{post.blogTitle}</h1>
         <p>{stripHtml(post.blogHTML).slice(0, 180) || "Open the post to read the full story."}</p>
+        <div className="article-meta feature-meta">
         <Link href={`/posts/${post.blogID}`} className="button primary">
           Read feature <ArrowRight size={17} />
         </Link>
+        <div className="meta-info">
+          <span className="byline">By {post.publisherName}</span>
+          <span className="eyebrow">{post.dateLabel}</span>
+        </div>
+        </div>
+
       </div>
       <div className="feature-art">
         {post.blogCoverPhoto ? <Image src={post.blogCoverPhoto} alt="" fill priority sizes="(min-width: 900px) 50vw, 100vw" /> : null}

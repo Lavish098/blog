@@ -33,8 +33,8 @@ export default function PostCard({ post, editable = false, onDeleted }) {
         )}
       </Link>
       <div className="post-card-body">
-        <span>{post.dateLabel}</span>
         <h3>{post.blogTitle}</h3>
+        <span className="post-meta">By {post.publisherName} · {post.dateLabel}</span>
         <Link href={`/posts/${post.blogID}`} className="inline-link">
           Read post <ArrowRight size={16} />
         </Link>

@@ -6,6 +6,8 @@ import { Bold, Heading2, ImagePlus, Italic, Link as LinkIcon, List, Quote, Save,
 import { createPost, updatePost, uploadPostImage } from "@/lib/posts";
 import { useAuth } from "@/components/AuthProvider";
 
+const EMPTY_DRAFT_HTML = "<h2>Start with the moment that matters.</h2><p>Write the post here. Use the toolbar above to shape the story.</p>";
+
 function runCommand(command, value = null) {
   document.execCommand(command, false, value);
 }
@@ -15,17 +17,63 @@ export default function PostEditor({ post }) {
   const { user } = useAuth();
   const editorRef = useRef(null);
   const fileRef = useRef(null);
+  const draftKey = post ? `savblogs-edit-draft-${post.blogID}` : "savblogs-new-post-draft";
   const [title, setTitle] = useState(post?.blogTitle || "");
   const [coverFile, setCoverFile] = useState(null);
   const [coverPreview, setCoverPreview] = useState(post?.blogCoverPhoto || "");
   const [status, setStatus] = useState("");
   const [saving, setSaving] = useState(false);
+  const [bodyHtml, setBodyHtml] = useState(post?.blogHTML || EMPTY_DRAFT_HTML);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    if (editorRef.current && post?.blogHTML) {
-      editorRef.current.innerHTML = post.blogHTML;
+    const savedDraft = window.localStorage.getItem(draftKey);
+
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        setTitle(draft.title || post?.blogTitle || "");
+        setCoverPreview(draft.coverPreview || post?.blogCoverPhoto || "");
+        setBodyHtml(draft.bodyHtml || post?.blogHTML || EMPTY_DRAFT_HTML);
+      } catch {
+        setBodyHtml(post?.blogHTML || EMPTY_DRAFT_HTML);
+      }
+    } else {
+      setTitle(post?.blogTitle || "");
+      setCoverPreview(post?.blogCoverPhoto || "");
+      setBodyHtml(post?.blogHTML || EMPTY_DRAFT_HTML);
     }
-  }, [post]);
+
+    setHydrated(true);
+  }, [draftKey, post]);
+
+  useEffect(() => {
+    if (editorRef.current && hydrated && editorRef.current.innerHTML !== bodyHtml) {
+      editorRef.current.innerHTML = bodyHtml;
+    }
+  }, [bodyHtml, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+
+    const timeout = window.setTimeout(() => {
+      window.localStorage.setItem(
+        draftKey,
+        JSON.stringify({
+          title,
+          bodyHtml,
+          coverPreview,
+          updatedAt: new Date().toISOString()
+        })
+      );
+    }, 250);
+
+    return () => window.clearTimeout(timeout);
+  }, [bodyHtml, coverPreview, draftKey, hydrated, title]);
+
+  function syncBody() {
+    setBodyHtml(editorRef.current?.innerHTML || "");
+  }
 
   function chooseCover(event) {
     const file = event.target.files?.[0];
@@ -42,6 +90,7 @@ export default function PostEditor({ post }) {
     setStatus("Uploading image...");
     const image = await uploadPostImage(file);
     runCommand("insertImage", image.url);
+    syncBody();
     setStatus("");
     event.target.value = "";
   }
@@ -66,14 +115,16 @@ export default function PostEditor({ post }) {
     try {
       if (post) {
         await updatePost(post.blogID, { title: title.trim(), html, coverFile });
+        window.localStorage.removeItem(draftKey);
         router.push(`/posts/${post.blogID}`);
       } else {
         const postId = await createPost({
           title: title.trim(),
           html,
           coverFile,
-          profileId: user?.uid || ""
+          profileId: user?.id || ""
         });
+        window.localStorage.removeItem(draftKey);
         router.push(`/posts/${postId}`);
       }
     } catch (err) {
@@ -154,10 +205,14 @@ export default function PostEditor({ post }) {
             <input ref={fileRef} className="hidden-input" type="file" accept="image/png,image/jpeg,image/jpg" onChange={insertImage} />
           </div>
 
-          <div ref={editorRef} className="rich-editor" contentEditable suppressContentEditableWarning>
-            <h2>Start with the moment that matters.</h2>
-            <p>Write the post here. Use the toolbar above to shape the story.</p>
-          </div>
+          <div
+            ref={editorRef}
+            className="rich-editor"
+            contentEditable
+            suppressContentEditableWarning
+            onInput={syncBody}
+            onBlur={syncBody}
+          />
         </div>
       </div>
     </section>

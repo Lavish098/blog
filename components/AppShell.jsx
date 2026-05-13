@@ -115,7 +115,7 @@ export default function AppShell({ children }) {
       {!authRoute && (
         <footer className="site-footer">
           <span>SavBlogs</span>
-          <p>Stories, reviews, and ZeeWorld moments curated with care.</p>
+          <p>Stories, reviews, and World moments curated with care.</p>
         </footer>
       )}
     </div>
